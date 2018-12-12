@@ -7,7 +7,7 @@ import java.util.HashSet;
 
 
 public class Main {
-    static String[] v_paivat = {"su", "ma", "ti", "ke", "to", "pe", "la"};
+   static String[] v_paivat = {"su", "ma", "ti", "ke", "to", "pe", "la"};
 
     static class Tyo {
         public String idx;
@@ -43,18 +43,18 @@ public class Main {
 
         ArrayList<Duunari> duunarit = new ArrayList<>();
 
-        
+        // niin kaua kun on Tyo tekemäti
         while (duuni_tehty < tyot.size()) {
-           
+            //palkkaa uusi Duunari
             Duunari nyt_duunari = new Duunari();
             int idi = 0;
 
-           
+            // niin kauan kun kyseinen Tyo ei ylitä maksimi minuutteja
             while (nyt_duunari.tyo_aika < max_minuutit && idi < tyot.size()) {
                 if (!tehdyt_duunit.contains(idi) && ok(nyt_duunari, tyot.get(idi)) &&
                         nyt_duunari.tyo_aika + tyot.get(idi).duunaa_minuutteina <= max_minuutit) {
 
-                    
+                    // lisää työ
                     nyt_duunari = lisaa_tyo(nyt_duunari, tyot.get(idi));
                     duuni_tehty++;
                     tehdyt_duunit.add(idi);
@@ -66,7 +66,7 @@ public class Main {
             duunarit.add(nyt_duunari);
         }
 
-      
+        // tuntilista 
         System.out.println("### Duunarit = " + duunarit.size() + " ###");
         int idnumero = 1;
         for (Main.Duunari Duunari : duunarit) {
@@ -84,11 +84,11 @@ public class Main {
 
     private static Duunari lisaa_tyo(Duunari nyt_duunari, Tyo tyo) {
 
-       
+        // onko työ eka tai menee pikkutunneille
         if (nyt_duunari.tyo_aika == 0 || (Integer.parseInt(tyo.alku_aika.substring(0, 2))) > (Integer.parseInt(tyo.loppu_aika.substring(0, 2)))) {
             nyt_duunari.paiva = tyo.paiva;
         } else {
-          
+            // seuraava päivänumero
             int nyt_paiva = tyo_paiva_nro(tyo.paiva);
             int nyt_viikko = Integer.parseInt("" + tyo.paiva.charAt(2));
             int seuraava_paiva = (nyt_paiva + 1) % 7;
@@ -100,7 +100,7 @@ public class Main {
             }
             nyt_duunari.paiva = v_paivat[seuraava_paiva] + Integer.toString(nyt_viikko);
         }
-     
+        // lisää aika -> Tyo
         nyt_duunari.tyo_aika += tyo.duunaa_minuutteina;
 
         nyt_duunari.loppu_aika = tyo.loppu_aika;
@@ -111,7 +111,7 @@ public class Main {
     }
 
     private static int tyo_paiva_nro(String paiva) {
-    
+        // hae paiva numero
         String[] paivat1 = {"su1", "ma1", "ti1", "ke1", "to1", "pe1", "la1"};
         String[] paivat2 = {"su2", "ma2", "ti2", "ke2", "to2", "pe2", "la2"};
         String[] paivat3 = {"su3", "ma3", "ti3", "ke3", "to3", "pe3", "la3"};
@@ -126,23 +126,23 @@ public class Main {
     private static boolean ok(Duunari nyt_duunari, Tyo tyo) {
         if (nyt_duunari.tyo_aika == 0) {
             return true;
-         
+            // tarkista edeltävä 
         } else if ((nyt_duunari.paiva.charAt(2) - '0') < (tyo.paiva.charAt(2) - '0')) {
             return true;
 
-           
+            // tarkista sama viikko ja edeltävä päivä
         } else if ((nyt_duunari.paiva.charAt(2) - '0') == (tyo.paiva.charAt(2) - '0') &&
                 (tyo_paiva_nro(nyt_duunari.paiva) < tyo_paiva_nro(tyo.paiva))) {
             return true;
 
-           
+            // tunnit
         } else if ((nyt_duunari.paiva.charAt(2) - '0') == (tyo.paiva.charAt(2) - '0') &&
                 (tyo_paiva_nro(nyt_duunari.paiva) == tyo_paiva_nro(tyo.paiva)) &&
                 (Integer.parseInt((nyt_duunari.loppu_aika.substring(0, 2))) <
                         Integer.parseInt(tyo.alku_aika.substring(0, 2))
                 )) {
             return true;
-            
+            // minuutit
         } else if ((nyt_duunari.paiva.charAt(2) - '0') == (tyo.paiva.charAt(2) - '0') &&
                 (tyo_paiva_nro(nyt_duunari.paiva) == tyo_paiva_nro(tyo.paiva)) &&
                 (Integer.parseInt((nyt_duunari.loppu_aika.substring(0, 2))) ==
@@ -165,7 +165,7 @@ public class Main {
                                                             
         try (BufferedReader br = new BufferedReader(new FileReader("tyot.txt"))) {
             String line;
-            
+            // lukee datan rivirivilta
             while ((line = br.readLine()) != null) {
                 String[] data = line.split("\t");
                 Tyo nyt = new Tyo();
@@ -176,7 +176,7 @@ public class Main {
                 nyt.alku_aika = data[4];
                 String[] loppuaika_normalisoimatta = data[5].trim().split(":");
 
-               
+                // puristaa tunnit 0 24
                 int tunti;
                 if (Integer.parseInt(loppuaika_normalisoimatta[0]) % 24 == 0) {
                     tunti = 24;
